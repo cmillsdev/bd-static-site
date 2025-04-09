@@ -23,7 +23,6 @@ def text_node_to_html_node(text_node):
         case _:
             raise ValueError("no matching text type")
 
-
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     new_nodes = []
     for node in old_nodes:
@@ -43,10 +42,64 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
     return new_nodes
 
 def split_nodes_image(old_nodes):
-    pass
+    result = []
+    
+    for old_node in old_nodes:
+        if old_node.text_type != TextType.TEXT:
+            result.append(old_node)
+            continue
+            
+        current_text = old_node.text
+        matches = extract_markdown_images(current_text)
+        
+        if not matches:
+            result.append(old_node)
+            continue
+            
+        for alt_text, url in matches:
+            parts = current_text.split(f"![{alt_text}]({url})", 1)
+            
+            if parts[0]:
+                result.append(TextNode(parts[0], TextType.TEXT))
+                
+            result.append(TextNode(alt_text, TextType.IMAGE, url))
+            
+            current_text = parts[1] if len(parts) > 1 else ""
+       
+        if current_text:
+            result.append(TextNode(current_text, TextType.TEXT))
+            
+    return result
 
 def split_nodes_link(old_nodes):
-    pass
+    result = []
+    
+    for old_node in old_nodes:
+        if old_node.text_type != TextType.TEXT:
+            result.append(old_node)
+            continue
+            
+        current_text = old_node.text
+        matches = extract_markdown_links(current_text)
+        
+        if not matches:
+            result.append(old_node)
+            continue
+            
+        for text, url in matches:
+            parts = current_text.split(f"[{text}]({url})", 1)
+            
+            if parts[0]:
+                result.append(TextNode(parts[0], TextType.TEXT))
+                
+            result.append(TextNode(text, TextType.LINK, url))
+            
+            current_text = parts[1] if len(parts) > 1 else ""
+       
+        if current_text:
+            result.append(TextNode(current_text, TextType.TEXT))
+            
+    return result
 
 def extract_markdown_images(text):
     image_re = re.compile(r"!\[([^\[\]]*)\]\(([^\(\)]*)\)")
@@ -55,3 +108,12 @@ def extract_markdown_images(text):
 def extract_markdown_links(text):
     link_re = re.compile(r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)")
     return re.findall(link_re, text)
+
+def text_to_textnodes(text):
+    og_textnode = TextNode(text, TextType.TEXT)
+    nodes = split_nodes_image([og_textnode])
+    nodes = split_nodes_link(nodes)
+    nodes = split_nodes_delimiter(nodes, '**', TextType.BOLD)
+    nodes = split_nodes_delimiter(nodes, '_', TextType.ITALIC)
+    nodes = split_nodes_delimiter(nodes, '`', TextType.CODE)
+    return nodes
