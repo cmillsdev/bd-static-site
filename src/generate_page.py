@@ -9,7 +9,6 @@ def open_file(filepath):
 def generate_pages_recursive(file_list, source, dest):
     if not len(file_list):
         return True
-    print(file_list[0], source, dest)
     file_dest = file_list[0].replace(source,dest).replace(".md", ".html")
     dir_path = "/".join(file_dest.split("/")[:-1])
     print(f"process_public_files: {file_list[0]} -> {file_dest}")
@@ -35,8 +34,8 @@ def generate_page(source_path, template_path, dest_path):
 
     template_html = template_html.replace("{{ Title }}", title)
     template_html = template_html.replace("{{ Content }}", conv_html.to_html())
-    template_html = template_html.replace('href="/', f'href="{dest_path}')
-    template_html = template_html.replace('src="/', f'src="{dest_path}')
+    #template_html = template_html.replace('href="/', f'href="{dest_path}')
+    #template_html = template_html.replace('src="/', f'src="{dest_path}')
 
     with open(dest_path, "w") as f:
         f.write(template_html)
