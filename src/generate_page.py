@@ -17,7 +17,7 @@ def generate_pages_recursive(file_list, source, dest):
         os.makedirs(dir_path)
     
     generate_page(file_list[0], "template.html", file_dest)
-    process_public_files(file_list[1:], source, dest)
+    generate_pages_recursive(file_list[1:], source, dest)
 
 def extract_title(markdown):
     blocks = markdown_to_blocks(markdown)
@@ -35,6 +35,8 @@ def generate_page(source_path, template_path, dest_path):
 
     template_html = template_html.replace("{{ Title }}", title)
     template_html = template_html.replace("{{ Content }}", conv_html.to_html())
+    template_html = template_html.replace('href="/', 'href="{basepath}')
+    template_html = template_html.replace('src="/', 'src="{basepath}')
 
     with open(dest_path, "w") as f:
         f.write(template_html)
