@@ -13,10 +13,10 @@ def overwrite_dir(source="static", dest="public"):
     copy_files(file_list, source, dest)
 
 def main():
-    if sys.argv[1]:
+    if len(sys.argv) > 1:
         base_dir = sys.argv[1]
     else:
-        base_dir = "/"
+        base_dir = ""
     overwrite_dir(dest=f"{base_dir}docs")
     generate_pages_recursive(get_file_list("content"), "content", f"{base_dir}docs")
 
