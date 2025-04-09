@@ -24,7 +24,9 @@ class LeafNode(HTMLNode):
         super().__init__(tag, value=value, children=None, props=props)
 
     def to_html(self):
+        # print(f"Rendering HtmlNode: {self.tag}, children: {len(self.children)}")
         if not self.value:
+            print(self)
             raise ValueError
         if not self.tag:
             return self.value
@@ -36,6 +38,7 @@ class ParentNode(HTMLNode):
         super().__init__(tag, value=None, children=children, props=props)
 
     def to_html(self):
+        # print(f"Rendering HtmlNode: {self.tag}, children: {len(self.children)}")
         if not self.tag:
             raise ValueError("missing tag")
         if not self.children:
