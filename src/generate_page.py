@@ -34,8 +34,8 @@ def generate_page(source_path, template_path, dest_path):
 
     template_html = template_html.replace("{{ Title }}", title)
     template_html = template_html.replace("{{ Content }}", conv_html.to_html())
-    #template_html = template_html.replace('href="/', f'href="{dest_path}')
-    #template_html = template_html.replace('src="/', f'src="{dest_path}')
+    template_html = template_html.replace('href="/', f'href="docs')
+    template_html = template_html.replace('src="/', f'src="docs')
 
     with open(dest_path, "w") as f:
         f.write(template_html)
